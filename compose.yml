@@ -1,0 +1,10 @@
+services:
+  todoapp:
+    build: .
+    ports:
+      - 8080:80
+    volumes:
+      - data:/app/data
+
+volumes:
+  data:

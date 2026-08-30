@@ -46,7 +46,7 @@ WORKDIR /app
 ENV RUST_BACKTRACE=1
 ENV ROCKET_ADDRESS=0.0.0.0
 ENV ROCKET_PORT=8000
-ENV DATABASE_URL=/app/db.sqlite
+ENV DATABASE_URL=/app/data/db.sqlite
 ENV ROCKET_DATABASES="{sqlite={url=\"${DATABASE_URL}\"}}"
 
 COPY --from=backend-builder /app/backend/target/release/todoapp_backend /app/backend_bin
@@ -56,6 +56,7 @@ COPY --from=frontend-builder /app/frontend/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY entrypoint.sh .
 RUN chmod +x entrypoint.sh
+RUN mkdir data
 
 EXPOSE 80
 
