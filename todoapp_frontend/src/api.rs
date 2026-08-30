@@ -1,6 +1,6 @@
 use dotenvy_macro::dotenv;
 
-use crate::models::todos::Todo;
+use crate::models::todos::{Todo, TodoInsert};
 
 const BACKEND_URL: &str = dotenv!("BACKEND_URL");
 
@@ -19,4 +19,17 @@ pub async fn update_todo(todo: Todo) {
         .send()
         .await
         .unwrap();
+}
+
+pub async fn new_todo(todo: TodoInsert) -> Todo {
+    let url = BACKEND_URL;
+    reqwest::Client::new()
+        .post(url)
+        .json(&todo)
+        .send()
+        .await
+        .unwrap()
+        .json()
+        .await
+        .unwrap()
 }
