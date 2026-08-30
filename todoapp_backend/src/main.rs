@@ -64,5 +64,5 @@ fn rocket() -> _ {
 
             rocket
         }))
-        .mount("/", tasks::get_routes())
+        .mount("/tasks", tasks::get_routes())
 }

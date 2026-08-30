@@ -6,8 +6,8 @@ use crate::models::todos::{Todo, TodoInsert};
 const BACKEND_URL: &str = dotenv!("BACKEND_URL");
 
 pub async fn get_todos() -> Vec<Todo> {
-    let url = BACKEND_URL;
-    Request::get(url)
+    let url = format!("{BACKEND_URL}/tasks/");
+    Request::get(&url)
         .send()
         .await
         .unwrap()
@@ -15,8 +15,8 @@ pub async fn get_todos() -> Vec<Todo> {
 }
 
 pub async fn update_todo(todo: Todo) {
-    let url = BACKEND_URL;
-    Request::put(url)
+    let url = format!("{BACKEND_URL}/tasks/");
+    Request::put(&url)
         .json(&todo)
         .unwrap()
         .send()
@@ -25,8 +25,8 @@ pub async fn update_todo(todo: Todo) {
 }
 
 pub async fn new_todo(todo: TodoInsert) -> Todo {
-    let url = BACKEND_URL;
-    Request::post(url)
+    let url = format!("{BACKEND_URL}/tasks/");
+    Request::post(&url)
         .json(&todo)
         .unwrap()
         .send()
@@ -38,7 +38,7 @@ pub async fn new_todo(todo: TodoInsert) -> Todo {
 }
 
 pub async fn delete_todo(id: i32) {
-    let url = format!("{BACKEND_URL}{id}");
+    let url = format!("{BACKEND_URL}/tasks/{id}");
     Request::delete(&url)
         .send()
         .await
