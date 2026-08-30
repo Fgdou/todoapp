@@ -12,7 +12,7 @@ fn Item(props: &ItemProps) -> Html {
     let item = &props.item;
     html!(
         <div>
-            <span><md-checkbox touch-target="wrapper"/></span>
+            <span>{item.done}</span>
             <span>{item.title.clone()}</span>
             <span>{item.description.clone()}</span>
         </div>
