@@ -2,6 +2,7 @@
 
 use dotenvy::dotenv;
 use rocket::{serde::json::Json};
+use rocket_cors::{AllowedOrigins, CorsOptions};
 use rocket_sync_db_pools::database;
 
 use crate::models::todos::{Todo, TodoInsert};
@@ -34,8 +35,25 @@ pub struct Database(diesel::SqliteConnection);
 
 #[launch]
 fn rocket() -> _ {
+    let allowed_origins = AllowedOrigins::some_exact(&[
+        "http://localhost:8080",
+    ]);
+
+    let cors = CorsOptions {
+        allowed_origins,
+        allowed_methods: vec![
+                rocket::http::Method::Get,
+                rocket::http::Method::Put,
+                rocket::http::Method::Delete,
+                rocket::http::Method::Post,
+            ].into_iter().map(From::from).collect(),
+            allow_credentials: true,
+            ..Default::default()
+    }.to_cors().unwrap();
+
     dotenv().ok();
     rocket::build()
+        .attach(cors)
         .attach(Database::fairing())
         .mount("/", routes![list_todos, create_todo, update_todo, delete_todo])
 }
