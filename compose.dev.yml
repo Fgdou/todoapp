@@ -1,6 +1,6 @@
 services:
   todoapp:
-    image: ghcr.io/fgdou/todoapp:latest
+    build: .
     ports:
       - 8080:80
     volumes:
