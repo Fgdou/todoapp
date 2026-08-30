@@ -40,9 +40,7 @@ pub struct Database(diesel::SqliteConnection);
 fn rocket() -> _ {
     println!("Starting backend");
 
-    let allowed_origins = AllowedOrigins::some_exact(&[
-        "http://localhost:8080",
-    ]);
+    let allowed_origins = AllowedOrigins::all();
 
     let cors = CorsOptions {
         allowed_origins,
