@@ -4,7 +4,7 @@ pub mod components;
 
 use yew::prelude::*;
 
-use crate::components::todo_list::TodoList;
+use crate::components::task_list::TaskList;
 
 #[component]
 fn App() -> Html {
@@ -12,7 +12,7 @@ fn App() -> Html {
         <div>
             <h1 class="bg-amber-50 text-center py-20 text-5xl font-mono">{"Todo List"}</h1>
             <div class="container mx-auto max-w-xl">
-                <TodoList/>
+                <TaskList/>
             </div>
         </div>
     )

@@ -1,7 +1,7 @@
 // @generated automatically by Diesel CLI.
 
 diesel::table! {
-    todos (id) {
+    tasks (id) {
         id -> Integer,
         title -> Text,
         description -> Text,

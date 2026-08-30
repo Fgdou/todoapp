@@ -1,19 +1,19 @@
 use yew::prelude::*;
 
-use crate::{components::{checkbox::Checkbox, hidden_input::HiddenInput}, models::todos::Todo};
+use crate::{components::{checkbox::Checkbox, hidden_input::HiddenInput}, models::tasks::Task};
 
 
 #[derive(Properties, PartialEq)]
 pub struct ItemProps {
-    pub item: Todo,
+    pub item: Task,
     #[prop_or_default]
-    pub update_item_callback: Option<Callback<Todo>>,
+    pub update_item_callback: Option<Callback<Task>>,
     #[prop_or_default]
     pub delete_callback: Option<Callback<i32>>,
 }
 
 #[component]
-pub fn Item(props: &ItemProps) -> Html {
+pub fn TaskItem(props: &ItemProps) -> Html {
     let item = &props.item;
 
     let checkbox = {

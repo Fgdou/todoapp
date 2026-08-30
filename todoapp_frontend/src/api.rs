@@ -1,11 +1,11 @@
 use dotenvy_macro::dotenv;
 use gloo_net::http::Request;
 
-use crate::models::todos::{Todo, TodoInsert};
+use crate::models::tasks::{Task, TaskInsert};
 
 const BACKEND_URL: &str = dotenv!("BACKEND_URL");
 
-pub async fn get_todos() -> Vec<Todo> {
+pub async fn get_tasks() -> Vec<Task> {
     let url = format!("{BACKEND_URL}/tasks/");
     Request::get(&url)
         .send()
@@ -14,7 +14,7 @@ pub async fn get_todos() -> Vec<Todo> {
         .json::<_>().await.unwrap()
 }
 
-pub async fn update_todo(todo: Todo) {
+pub async fn update_task(todo: Task) {
     let url = format!("{BACKEND_URL}/tasks/");
     Request::put(&url)
         .json(&todo)
@@ -24,7 +24,7 @@ pub async fn update_todo(todo: Todo) {
         .unwrap();
 }
 
-pub async fn new_todo(todo: TodoInsert) -> Todo {
+pub async fn new_task(todo: TaskInsert) -> Task {
     let url = format!("{BACKEND_URL}/tasks/");
     Request::post(&url)
         .json(&todo)
@@ -37,7 +37,7 @@ pub async fn new_todo(todo: TodoInsert) -> Todo {
         .unwrap()
 }
 
-pub async fn delete_todo(id: i32) {
+pub async fn delete_task(id: i32) {
     let url = format!("{BACKEND_URL}/tasks/{id}");
     Request::delete(&url)
         .send()
