@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{Database, schema::todos};
 
-#[derive(Queryable, Selectable, Deserialize, Serialize, AsChangeset, Clone)]
+#[derive(Queryable, Selectable, Deserialize, Serialize, AsChangeset, Clone, Identifiable)]
 #[diesel(table_name = crate::schema::todos)]
 #[diesel(check_for_backend(diesel::sqlite::Sqlite))]
 pub struct Todo {
@@ -31,6 +31,7 @@ impl Todo {
         let me = self.clone();
         conn.run(move |conn| {
             diesel::update(todos::table)
+                .filter(todos::id.eq(me.id))
                 .set(me)
                 .execute(conn)
                 .unwrap();

@@ -1,2 +1,0 @@
-[default.databases]
-sqlite = { url = "/tmp/todoapp.sqlite" }
