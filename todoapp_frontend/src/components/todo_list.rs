@@ -66,9 +66,20 @@ pub fn TodoList() -> Html {
         })
     };
 
+    let update_handler = {
+        let todos = todos.clone();
+        Callback::from(move |_| {
+            let todos = todos.clone();
+            spawn_local(async move {
+                let items = get_todos().await;
+                todos.set(items);
+            });
+        })
+    };
+
     html!(
         <div>
-            <div><button onclick={new_item}>{"New Item"}</button></div>
+            <div><button onclick={new_item}>{"New Item"}</button><button onclick={update_handler}>{"Refresh"}</button></div>
             <div  class="flex gap-3 flex-col">
                 for todo in todos.iter() {
                     <Item item={todo.clone()} update_item_callback={callback.clone()} delete_callback={delete_callback.clone()}/>
