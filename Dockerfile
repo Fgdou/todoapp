@@ -40,7 +40,6 @@ RUN cargo build --release
 
 # Nginx
 FROM nginx:alpine
-RUN apk add --no-cache libgcc libstdc++ gcompat
 WORKDIR /app
 
 ENV RUST_BACKTRACE=1
