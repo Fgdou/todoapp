@@ -2,36 +2,18 @@
 
 use diesel_migrations::{EmbeddedMigrations, MigrationHarness, embed_migrations};
 use dotenvy::dotenv;
-use rocket::{fairing::AdHoc, serde::json::Json};
+use rocket::fairing::AdHoc;
 use rocket_cors::{AllowedOrigins, CorsOptions};
 use rocket_sync_db_pools::database;
 
-use crate::models::todos::{Todo, TodoInsert};
+use crate::routes::tasks::{create_todo, delete_todo, list_todos, update_todo};
 
 pub mod schema;
 pub mod models;
+pub mod routes;
 
 pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!();
 
-#[get("/")]
-async fn list_todos(conn: Database) -> Json<Vec<Todo>> {
-    Json(Todo::get_all(&conn).await)
-}
-
-#[post("/", data = "<todo>")]
-async fn create_todo(conn: Database, todo: Json<TodoInsert>) -> Json<Todo> {
-    Json(todo.save(&conn).await)
-}
-
-#[put("/", data = "<todo>")]
-async fn update_todo(conn: Database, todo: Json<Todo>) {
-    todo.update(&conn).await
-}
-
-#[delete("/<id>")]
-async fn delete_todo(conn: Database, id: i32) {
-    Todo::delete(&conn, id).await
-}
 
 #[database("sqlite")]
 pub struct Database(diesel::SqliteConnection);
