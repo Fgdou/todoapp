@@ -10,8 +10,10 @@ use crate::components::todo_list::TodoList;
 fn App() -> Html {
     html!(
         <div>
-            <h1>{"TODO List"}</h1>
-            <TodoList/>
+            <h1 class="bg-amber-50 text-center py-20 text-5xl font-mono">{"Todo List"}</h1>
+            <div class="container mx-auto max-w-xl">
+                <TodoList/>
+            </div>
         </div>
     )
 }

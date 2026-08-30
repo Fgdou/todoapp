@@ -46,7 +46,7 @@ pub fn Item(props: &ItemProps) -> Html {
         });
 
         html!(
-            <HiddenInput value={title} strikethrough={done} callback={callback} />
+            <HiddenInput value={title} strikethrough={done} callback={callback} label={"Title"} />
         )
     };
 
@@ -63,7 +63,7 @@ pub fn Item(props: &ItemProps) -> Html {
         });
 
         html!(
-            <HiddenInput value={description} callback={callback} />
+            <HiddenInput multiline={true} value={description} callback={callback} label={"Description"} />
         )
     };
 
@@ -77,11 +77,15 @@ pub fn Item(props: &ItemProps) -> Html {
     };
 
     html!(
-        <div>
-            <span>{checkbox}</span>
-            <span>{title}</span>
-            <span>{description}</span>
-            <span><button onclick={delete_handler}>{"Delete"}</button></span>
+        <div class="flex gap-2 border-1 rounded-xl px-3 py-2 border-amber-400">
+            <div>{checkbox}</div>
+            <div class="flex-grow flex flex-col">
+                <div class="flex">
+                    <span class="flex-grow">{title}</span>
+                    <span><button onclick={delete_handler} class="text-red-800 font-mono">{"Delete"}</button></span>
+                </div>
+                <span>{description}</span>
+            </div>
         </div>
     )
 }

@@ -79,7 +79,10 @@ pub fn TodoList() -> Html {
 
     html!(
         <div>
-            <div><button onclick={new_item}>{"New Item"}</button><button onclick={update_handler}>{"Refresh"}</button></div>
+            <div class="my-5 flex justify-between">
+                <button class="bg-amber-50 font-mono py-2 px-5 text-xl rounded-xl border-1 border-amber-400" onclick={new_item}>{"New Item"}</button>
+                <button class="bg-amber-50 font-mono py-2 px-5 text-xl rounded-xl border-1 border-amber-400" onclick={update_handler}>{"Refresh"}</button>
+            </div>
             <div  class="flex gap-3 flex-col">
                 for todo in todos.iter() {
                     <Item item={todo.clone()} update_item_callback={callback.clone()} delete_callback={delete_callback.clone()}/>
