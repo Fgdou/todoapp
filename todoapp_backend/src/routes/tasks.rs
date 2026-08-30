@@ -1,4 +1,4 @@
-use rocket::serde::json::Json;
+use rocket::{Route, serde::json::Json};
 
 use crate::{Database, models::todos::{Todo, TodoInsert}};
 
@@ -21,4 +21,8 @@ pub async fn update_todo(conn: Database, todo: Json<Todo>) {
 #[delete("/<id>")]
 pub async fn delete_todo(conn: Database, id: i32) {
     Todo::delete(&conn, id).await
+}
+
+pub fn get_routes() -> Vec<Route> {
+    routes![list_todos, create_todo, update_todo, delete_todo]
 }

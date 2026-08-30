@@ -6,7 +6,7 @@ use rocket::fairing::AdHoc;
 use rocket_cors::{AllowedOrigins, CorsOptions};
 use rocket_sync_db_pools::database;
 
-use crate::routes::tasks::{create_todo, delete_todo, list_todos, update_todo};
+use crate::routes::tasks::{self, create_todo, delete_todo, list_todos, update_todo};
 
 pub mod schema;
 pub mod models;
@@ -64,5 +64,5 @@ fn rocket() -> _ {
 
             rocket
         }))
-        .mount("/", routes![list_todos, create_todo, update_todo, delete_todo])
+        .mount("/", tasks::get_routes())
 }
