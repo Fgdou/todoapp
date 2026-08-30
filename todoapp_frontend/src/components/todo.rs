@@ -8,6 +8,8 @@ pub struct ItemProps {
     pub item: Todo,
     #[prop_or_default]
     pub update_item_callback: Option<Callback<Todo>>,
+    #[prop_or_default]
+    pub delete_callback: Option<Callback<i32>>,
 }
 
 #[component]
@@ -66,11 +68,20 @@ pub fn Item(props: &ItemProps) -> Html {
     };
 
 
+    let delete_handler = {
+        let delete_callback = props.delete_callback.clone();
+        let id = item.id;
+        Callback::from(move |_| {
+            delete_callback.as_ref().map(|c| c.emit(id));
+        })
+    };
+
     html!(
         <div>
             <span>{checkbox}</span>
             <span>{title}</span>
             <span>{description}</span>
+            <span><button onclick={delete_handler}>{"Delete"}</button></span>
         </div>
     )
 }

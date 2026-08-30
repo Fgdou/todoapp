@@ -33,3 +33,12 @@ pub async fn new_todo(todo: TodoInsert) -> Todo {
         .await
         .unwrap()
 }
+
+pub async fn delete_todo(id: i32) {
+    let url = format!("{BACKEND_URL}/{id}");
+    reqwest::Client::new()
+        .delete(url)
+        .send()
+        .await
+        .unwrap();
+}

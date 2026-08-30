@@ -1,6 +1,6 @@
 use yew::{platform::spawn_local, prelude::*};
 
-use crate::{api::{get_todos, new_todo, update_todo}, components::todo::Item, models::todos::{Todo, TodoInsert}};
+use crate::{api::{delete_todo, get_todos, new_todo, update_todo}, components::todo::Item, models::todos::{Todo, TodoInsert}};
 
 #[component]
 pub fn TodoList() -> Html {
@@ -36,6 +36,19 @@ pub fn TodoList() -> Html {
         })
     };
 
+    let delete_callback = {
+        let todos = todos.clone();
+        Callback::from(move |id: i32| {
+            spawn_local(async move {
+                delete_todo(id).await;
+            });
+
+            let mut new_todos = (*todos).clone();
+            new_todos.retain(|t| t.id != id);
+            todos.set(new_todos);
+        })
+    };
+
     let new_item = {
         let todos = todos.clone();
         Callback::from(move |_| {
@@ -54,12 +67,14 @@ pub fn TodoList() -> Html {
     };
 
     html!(
-        <div  class="flex gap-3 flex-col">
-            for todo in todos.iter() {
-                <Item item={todo.clone()} update_item_callback={callback.clone()}/>
-            }
-
+        <div>
             <div><button onclick={new_item}>{"New Item"}</button></div>
+            <div  class="flex gap-3 flex-col">
+                for todo in todos.iter() {
+                    <Item item={todo.clone()} update_item_callback={callback.clone()} delete_callback={delete_callback.clone()}/>
+                }
+
+            </div>
         </div>
     )
 }
