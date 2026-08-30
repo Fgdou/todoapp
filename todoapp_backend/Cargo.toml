@@ -5,7 +5,9 @@ edition = "2024"
 
 [dependencies]
 diesel = { version = "2.3.12", features = ["returning_clauses_for_sqlite_3_35", "serde_json", "sqlite"] }
+diesel_migrations = { version = "2.3.2", features = ["sqlite"] }
 dotenvy = "0.15.7"
+libsqlite3-sys = { version = "0.38.2", features = ["bundled"] }
 rocket = { version = "0.5.1", features = ["json", "serde_json"] }
 rocket_cors = "0.6.0"
 rocket_sync_db_pools = { version = "0.1.0", features = ["diesel_sqlite_pool"] }
