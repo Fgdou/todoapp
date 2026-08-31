@@ -1,7 +1,7 @@
 use rand::distr::{Alphanumeric, SampleString};
 use rocket::{Route, serde::json::Json};
 
-use crate::{Database, core::auth::Auth, models::users::{Token, User, UserLogin, UserRegister}};
+use crate::{Database, core::auth::Auth, models::users::{Token, User, UserLogin, UserLoginResponse, UserRegister}};
 
 pub fn get_routes() -> Vec<Route> {
     routes![register_user, login, user_logout]
@@ -18,20 +18,28 @@ pub async fn register_user(conn: Database, user: Json<UserRegister>) -> Json<Res
 }
 
 #[post("/login", data = "<user>")]
-pub async fn login(conn: Database, user: Json<UserLogin>) -> Json<Result<Token, String>> {
+pub async fn login(conn: Database, user: Json<UserLogin>) -> Json<Result<UserLoginResponse, String>> {
     let user = user.into_inner();
     let id = user.id;
     let token = Token {
         user_id: id,
         token: generate_random_token()
     };
-    
-    Json(
-        match User::get_user(id, &conn).await {
-            None => Err(format!("Username {id} does not exist")),
-            Some(_) => Ok(token.save(&conn).await)
-        }
-    )
+
+    let user = match User::get_user(id, &conn).await {
+            None => return Json(Err(format!("Username {id} does not exist"))),
+            Some(user) => user
+    };
+
+    let saved_token = token.save(&conn).await;
+
+    let response = UserLoginResponse {
+        user_id: user.id,
+        username: user.username,
+        token: saved_token.token,
+    };
+
+    Json(Ok(response))
 }
 
 fn generate_random_token() -> String {

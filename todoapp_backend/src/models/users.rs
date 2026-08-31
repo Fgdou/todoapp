@@ -30,6 +30,13 @@ pub struct UserRegister {
     pub username: String,
 }
 
+#[derive(Serialize, Deserialize, Clone)]
+pub struct UserLoginResponse {
+    pub user_id: i32,
+    pub username: String,
+    pub token: String,
+}
+
 impl User {
     pub async fn save(user: UserRegister, conn: &Database) -> Option<Self> {
         conn.run(move |c| {

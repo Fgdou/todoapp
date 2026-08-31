@@ -1,7 +1,7 @@
 use dotenvy_macro::dotenv;
 use gloo_net::http::Request;
 
-use crate::models::tasks::{Task, TaskInsert};
+use crate::models::{tasks::{Task, TaskInsert}, users::{Login, User}};
 
 const BACKEND_URL: &str = dotenv!("BACKEND_URL");
 
@@ -40,6 +40,28 @@ pub async fn new_task(todo: TaskInsert) -> Task {
 pub async fn delete_task(id: i32) {
     let url = format!("{BACKEND_URL}/tasks/{id}");
     Request::delete(&url)
+        .send()
+        .await
+        .unwrap();
+}
+
+pub async fn login(login: &Login) -> Result<User, String> {
+    let url = format!("{BACKEND_URL}/auth/login");
+    Request::post(&url)
+        .json(login)
+        .unwrap()
+        .send()
+        .await
+        .unwrap()
+        .json()
+        .await
+        .unwrap()
+}
+
+pub async fn logout(token: &str) {
+    let url = format!("{BACKEND_URL}/auth/logout");
+    Request::post(&url)
+        .header("Token", token)
         .send()
         .await
         .unwrap();
