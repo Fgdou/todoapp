@@ -8,3 +8,21 @@ diesel::table! {
         done -> Bool,
     }
 }
+
+diesel::table! {
+    user_token (token) {
+        token -> Text,
+        user_id -> Integer,
+    }
+}
+
+diesel::table! {
+    users (id) {
+        id -> Integer,
+        username -> Text,
+    }
+}
+
+diesel::joinable!(user_token -> users (user_id));
+
+diesel::allow_tables_to_appear_in_same_query!(tasks, user_token, users,);

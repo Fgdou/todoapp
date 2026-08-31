@@ -6,7 +6,7 @@ use rocket::fairing::AdHoc;
 use rocket_cors::{AllowedOrigins, CorsOptions};
 use rocket_sync_db_pools::database;
 
-use crate::routes::tasks;
+use crate::routes::{auth, tasks};
 
 pub mod schema;
 pub mod models;
@@ -65,4 +65,5 @@ fn rocket() -> _ {
             rocket
         }))
         .mount("/tasks", tasks::get_routes())
+        .mount("/auth", auth::get_routes())
 }

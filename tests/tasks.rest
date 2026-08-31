@@ -1,8 +1,8 @@
-GET http://localhost:8000/
+GET http://localhost:8000/tasks/
 
 ###
 
-POST http://localhost:8000/ HTTP/1.1
+POST http://localhost:8000/tasks/ HTTP/1.1
 Content-Type: application/json
 
 {
@@ -12,7 +12,7 @@ Content-Type: application/json
 
 ###
 
-PUT http://localhost:8000/ HTTP/1.1
+PUT http://localhost:8000/tasks/ HTTP/1.1
 Content-Type: application/json
 
 {
@@ -24,4 +24,4 @@ Content-Type: application/json
 
 ###
 
-DELETE http://localhost:8000/1 HTTP/1.1
+DELETE http://localhost:8000/tasks/1 HTTP/1.1
