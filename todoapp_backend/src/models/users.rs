@@ -54,8 +54,6 @@ impl User {
         }).await;
     }
     pub async fn get_user(id: i32, conn:&Database) -> Option<Self> {
-        use schema::users::dsl::*;
-
         conn.run(move |c| {
             schema::users::table
                 .filter(schema::users::id.eq(id))
