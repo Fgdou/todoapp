@@ -1,7 +1,7 @@
 use rand::distr::{Alphanumeric, SampleString};
 use rocket::{Route, serde::json::Json};
 
-use crate::{Database, models::users::{Token, User, UserLogin, UserRegister}};
+use crate::{Database, core::auth::Auth, models::users::{Token, User, UserLogin, UserRegister}};
 
 pub fn get_routes() -> Vec<Route> {
     routes![register_user, login, user_logout]
@@ -39,6 +39,6 @@ fn generate_random_token() -> String {
 }
 
 #[get("/logout")]
-pub async fn user_logout(conn: Database) {
-
+pub async fn user_logout(conn: Database, auth: Auth) {
+    Token::invalidate(auth.token.token, &conn).await;
 }

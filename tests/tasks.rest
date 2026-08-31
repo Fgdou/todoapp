@@ -1,4 +1,5 @@
-GET http://localhost:8000/tasks/
+GET http://localhost:8000/tasks/ HTTP/1.1
+Token: I0akNeOFnDoJ1unyz2HfioPg3KL5odMI90ZfHqRIhmA3JB2ft3
 
 ###
 

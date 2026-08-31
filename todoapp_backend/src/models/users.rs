@@ -83,7 +83,7 @@ impl Token {
                 .ok()
         }).await
     }
-    pub async fn delete_token(token: String, conn: &Database) {
+    pub async fn invalidate(token: String, conn: &Database) {
         conn.run(move |c| {
             diesel::delete(schema::user_token::table)
                 .filter(schema::user_token::token.eq(token))

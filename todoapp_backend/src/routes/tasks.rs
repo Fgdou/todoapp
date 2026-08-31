@@ -1,25 +1,25 @@
 use rocket::{Route, serde::json::Json};
 
-use crate::{Database, models::tasks::{Task, TaskInsert}};
+use crate::{Database, core::auth::Auth, models::tasks::{Task, TaskInsert}};
 
 
 #[get("/")]
-pub async fn list_tasks(conn: Database) -> Json<Vec<Task>> {
+pub async fn list_tasks(conn: Database, _auth: Auth) -> Json<Vec<Task>> {
     Json(Task::get_all(&conn).await)
 }
 
 #[post("/", data = "<todo>")]
-pub async fn create_task(conn: Database, todo: Json<TaskInsert>) -> Json<Task> {
+pub async fn create_task(conn: Database, todo: Json<TaskInsert>, _auth: Auth) -> Json<Task> {
     Json(todo.save(&conn).await)
 }
 
 #[put("/", data = "<todo>")]
-pub async fn update_task(conn: Database, todo: Json<Task>) {
+pub async fn update_task(conn: Database, todo: Json<Task>, _auth: Auth) {
     todo.update(&conn).await
 }
 
 #[delete("/<id>")]
-pub async fn delete_task(conn: Database, id: i32) {
+pub async fn delete_task(conn: Database, id: i32, _auth: Auth) {
     Task::delete(&conn, id).await
 }
 
