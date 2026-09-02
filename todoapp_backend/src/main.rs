@@ -6,11 +6,12 @@ use rocket::fairing::AdHoc;
 use rocket_cors::{AllowedOrigins, CorsOptions};
 use rocket_sync_db_pools::database;
 
-use crate::routes::tasks;
+use crate::{core::auth::unauthorized, routes::{auth, tasks}};
 
 pub mod schema;
 pub mod models;
 pub mod routes;
+pub mod core;
 
 pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!();
 
@@ -65,4 +66,6 @@ fn rocket() -> _ {
             rocket
         }))
         .mount("/tasks", tasks::get_routes())
+        .mount("/auth", auth::get_routes())
+        .register("/", catchers![unauthorized])
 }

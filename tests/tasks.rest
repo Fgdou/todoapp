@@ -1,0 +1,29 @@
+GET http://localhost:8000/tasks/ HTTP/1.1
+Token: ixCcnxsDrdretDQAo2Goa8Ys3xwnvENX2xmzr0sShDQTY6fv1G
+
+###
+
+POST http://localhost:8000/tasks/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "title": "test",
+    "description": "test"
+}
+
+###
+
+PUT http://localhost:8000/tasks/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "id": 2,
+    "title": "no",
+    "description": "yes",
+    "done": true
+}
+
+###
+
+DELETE http://localhost:8000/tasks/28 HTTP/1.1
+Token: ixCcnxsDrdretDQAo2Goa8Ys3xwnvENX2xmzr0sShDQTY6fv1G
