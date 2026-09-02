@@ -2,7 +2,7 @@ use web_sys::{HtmlInputElement, js_sys::futures::spawn_local};
 use yew::prelude::*;
 use yew_router::hooks::use_navigator;
 
-use crate::{Route, api, models::{context::{ActionContext, AppContext}, users::{Login, User}}};
+use crate::{Route, api, models::{context::{ActionContext, AppContext}, users::Login}};
 
 #[component]
 pub fn LoginForm() -> Html {
