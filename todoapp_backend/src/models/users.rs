@@ -12,6 +12,12 @@ pub struct User {
     pub password: String,
 }
 
+#[derive(Serialize, Deserialize, Clone)]
+pub struct UserResponse {
+    pub id: i32,
+    pub username: String,
+}
+
 #[derive(Serialize, Deserialize, Queryable, Selectable, PartialEq, Clone, Insertable)]
 #[diesel(table_name = schema::user_token)]
 #[diesel(belongs_to(schema::users))]
@@ -107,5 +113,14 @@ impl Token {
                 .execute(c)
                 .unwrap()
         }).await;
+    }
+}
+
+impl From<User> for UserResponse {
+    fn from(value: User) -> Self {
+        Self {
+            id: value.id,
+            username: value.username,
+        }
     }
 }

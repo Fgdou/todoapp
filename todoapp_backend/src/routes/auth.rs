@@ -2,20 +2,21 @@ use rand::distr::{Alphanumeric, SampleString};
 use rocket::{Route, serde::json::Json};
 use sha2::{Digest, Sha256};
 
-use crate::{Database, core::auth::Auth, models::users::{Token, User, UserLogin, UserLoginResponse, UserRegister}};
+use crate::{Database, core::auth::Auth, models::users::{Token, User, UserLogin, UserLoginResponse, UserRegister, UserResponse}};
 
 pub fn get_routes() -> Vec<Route> {
     routes![register_user, login, user_logout]
 }
 
 #[post("/register", data = "<user>")]
-pub async fn register_user(conn: Database, user: Json<UserRegister>) -> Json<Result<User, String>> {
+pub async fn register_user(conn: Database, user: Json<UserRegister>) -> Json<Result<UserResponse, String>> {
     let username = user.username.clone();
     let mut user = user.into_inner();
     user.password = hash_password(&user.username, &user.password);
     Json(
         User::save(user, &conn)
             .await
+            .map(|u| u.into())
             .ok_or(format!("User {username} already exists"))
     )
 }
