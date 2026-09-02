@@ -10,7 +10,7 @@ pub async fn list_tasks(conn: Database, auth: Auth) -> Json<Vec<Task>> {
 
 #[post("/", data = "<todo>")]
 pub async fn create_task(conn: Database, todo: Json<TaskInsert>, auth: Auth) -> Json<Task> {
-    Json(todo.save(&conn, auth.user.id).await)
+    Json(todo.into_inner().save(&conn, auth.user.id).await)
 }
 
 #[put("/", data = "<todo>")]

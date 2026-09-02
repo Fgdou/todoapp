@@ -79,12 +79,8 @@ impl TaskUpdate {
 }
 
 impl TaskInsert {
-    pub async fn save(&self, conn: &Database, user_id: i32) -> Task {
-        let task = TaskInsertWithUser {
-            user_id,
-            title: self.title.clone(),
-            description: self.description.clone(),
-        };
+    pub async fn save(self, conn: &Database, user_id: i32) -> Task {
+        let task = self.to_insert_with_user(user_id);
         conn.run(move |conn| {
             diesel::insert_into(tasks::table)
                 .values(task)
@@ -92,5 +88,12 @@ impl TaskInsert {
                 .get_result(conn)
                 .unwrap()
         }).await
+    }
+    fn to_insert_with_user(self, id: i32) -> TaskInsertWithUser {
+        TaskInsertWithUser {
+            user_id: id,
+            description: self.description,
+            title: self.title,
+        }
     }
 }
