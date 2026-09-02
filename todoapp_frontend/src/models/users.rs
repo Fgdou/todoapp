@@ -7,7 +7,8 @@ pub struct User {
     pub token: String,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct Login {
-    pub id: i32,
+    pub username: String,
+    pub password: String,
 }

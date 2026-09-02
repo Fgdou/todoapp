@@ -8,18 +8,34 @@ use crate::{Route, api, models::{context::{ActionContext, AppContext}, users::{L
 pub fn LoginForm() -> Html {
     let navigator = use_navigator().unwrap();
     let login = use_state(|| Login {
-        id: 0,
+        username: String::new(),
+        password: String::new(),
     });
     let login_err = use_state(|| None);
 
-    let id_change = {
+    let username_change = {
         let login = login.clone();
 
         Callback::from(move |e: InputEvent| {
             let input: HtmlInputElement = e.target_unchecked_into();
-            let id = input.value().parse().unwrap_or_default();
+            let username = input.value().parse().unwrap_or_default();
+            let actual = (*login).clone();
             login.set(Login {
-                id,
+                username,
+                password: actual.password,
+            });
+        })
+    };
+    let password_change = {
+        let login = login.clone();
+
+        Callback::from(move |e: InputEvent| {
+            let input: HtmlInputElement = e.target_unchecked_into();
+            let password = input.value().parse().unwrap_or_default();
+            let actual = (*login).clone();
+            login.set(Login {
+                password,
+                username: actual.username,
             });
         })
     };
@@ -59,8 +75,8 @@ pub fn LoginForm() -> Html {
                 </div>
             }
             <form onsubmit={submit}>
-                <input oninput={id_change} type="number" placeholder="user id" name="user" />
-                // <input type="password" />
+                <input oninput={username_change} type="text" placeholder="user id" name="user" />
+                <input oninput={password_change} type="password" placeholder="password" name="password" />
                 <button type="submit">{"Login"}</button>
             </form>
         </div>

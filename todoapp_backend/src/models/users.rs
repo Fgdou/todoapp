@@ -9,6 +9,7 @@ use crate::{Database, schema};
 pub struct User {
     pub id: i32,
     pub username: String,
+    pub password: String,
 }
 
 #[derive(Serialize, Deserialize, Queryable, Selectable, PartialEq, Clone, Insertable)]
@@ -21,13 +22,15 @@ pub struct Token {
 
 #[derive(Deserialize)]
 pub struct UserLogin {
-    pub id: i32
+    pub username: String,
+    pub password: String,
 }
 
 #[derive(Deserialize, Insertable, Clone, PartialEq)]
 #[diesel(table_name = schema::users)]
 pub struct UserRegister {
     pub username: String,
+    pub password: String,
 }
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -64,6 +67,15 @@ impl User {
         conn.run(move |c| {
             schema::users::table
                 .filter(schema::users::id.eq(id))
+                .first::<User>(c)
+                .ok()
+        }).await
+    }
+    
+    pub async fn get_by_username(username: String, conn: &Database) -> Option<Self> {
+        conn.run(move |c| {
+            schema::users::table
+                .filter(schema::users::username.eq(username))
                 .first::<User>(c)
                 .ok()
         }).await
