@@ -19,11 +19,16 @@ fn switch(routes: Route) -> Html {
 fn App() -> Html {
     let state = use_reducer(Context::default);
     html!(
-        <ContextProvider<AppContext> context={state}>
-            <BrowserRouter>
-                <Switch<Route> render={switch} />
-            </BrowserRouter>
-        </ContextProvider<AppContext>>
+        <>
+            <ContextProvider<AppContext> context={state}>
+                <BrowserRouter>
+                    <Switch<Route> render={switch} />
+                </BrowserRouter>
+            </ContextProvider<AppContext>>
+            <div>
+                <a  class="absolute bottom-0 right-0 mx-5 my-3 text-xl pointer-select" href="https://github.com/Fgdou/todoapp" target="_blank">{"GitHub"}</a>
+            </div>
+        </>
     )
 }
 
