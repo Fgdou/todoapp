@@ -21,7 +21,7 @@ pub fn Button(props: &ButtonProperties) -> Html {
                 }
             } 
             type="submit" 
-            class="disabled:cursor-progress disabled:bg-gray-100 cursor-pointer bg-amber-50 border-1 rounded-xl p-3 font-mono border-amber-400 font-bold text-lg" 
+            class="disabled:cursor-progress disabled:bg-gray-100 cursor-pointer bg-amber-50 border-1 rounded-xl p-3 font-mono border-amber-400 font-bold text-lg active:inset-shadow-sm" 
             disabled={props.loading}>
                 {&props.name}
         </button>

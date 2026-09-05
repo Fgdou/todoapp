@@ -106,7 +106,7 @@ pub fn TaskList() -> Html {
     };
 
     html!(
-        <div>
+        <div class="m-5">
             <div class="my-5 flex justify-between">
                 <Button name="New Item" on_click={new_item}/>
                 <Button name="Refresh" on_click={update_handler} loading={*refreshing}/>

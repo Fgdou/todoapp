@@ -77,7 +77,7 @@ pub fn TaskItem(props: &ItemProps) -> Html {
     };
 
     html!(
-        <div class="flex gap-2 border-1 rounded-xl px-3 py-2 border-amber-400">
+        <div class="flex gap-2 border-1 rounded-xl px-3 py-2 border-amber-400 shadow-sm">
             <div>{checkbox}</div>
             <div class="flex-grow flex flex-col">
                 <div class="flex">
