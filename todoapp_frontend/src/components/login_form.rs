@@ -93,7 +93,7 @@ pub fn LoginForm() -> Html {
         <div class="w-lg mx-auto bg-white rounded-3xl p-10">
             <h1 class="text-center text-5xl font-mono my-10"> {"LOGIN"} </h1>
             if let Some(error) = login_err.as_ref() {
-                <div class="bg-red-100 p-2 rounded">
+                <div class="bg-red-100 p-2 rounded text-center">
                     {error}
                 </div>
             }
@@ -103,12 +103,14 @@ pub fn LoginForm() -> Html {
                 <button type="submit" class="bg-amber-50 border-1 rounded-xl p-3 font-mono border-amber-400">{"Submit"}</button>
             </form>
 
+            if *oidc_state != Some(false) {
+                <div class="text-center m-5"> {"OR"} </div>
+            }
+
             if *oidc_state == None {
-                <div> {"OR"} </div>
-                {"OIDC loading..."}
+                <button class="bg-amber-00 border-1 rounded-xl p-3 font-mono border-red-400 w-full">{"OIDC state loading..."}</button>
             } else if *oidc_state == Some(true) {
-                <div> {"OR"} </div>
-                <button onclick={oidc_click}>{"Login with OIDC"}</button>
+                <button class="bg-amber-50 border-1 rounded-xl p-3 font-mono border-amber-400 w-full" onclick={oidc_click}>{"Login with OIDC"}</button>
             }
         </div>
     )
