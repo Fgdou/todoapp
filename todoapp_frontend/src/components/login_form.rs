@@ -2,7 +2,7 @@ use web_sys::{HtmlInputElement, js_sys::futures::spawn_local, window};
 use yew::prelude::*;
 use yew_router::hooks::use_navigator;
 
-use crate::{Route, api, models::{context::{ActionContext, AppContext}, users::Login}};
+use crate::{Route, api, components::button::Button, models::{context::{ActionContext, AppContext}, users::Login}};
 
 #[component]
 pub fn LoginForm() -> Html {
@@ -12,6 +12,8 @@ pub fn LoginForm() -> Html {
         password: String::new(),
     });
     let login_err = use_state(|| None);
+
+    let login_loading = use_state(|| false);
 
     let username_change = {
         let login = login.clone();
@@ -43,12 +45,15 @@ pub fn LoginForm() -> Html {
     let state = use_context::<AppContext>().unwrap();
 
     let submit = {
+        let login_loading = login_loading.clone();
         let login = login.clone();
         let state = state.clone();
         let navigator = navigator.clone();
         let login_err = login_err.clone();
 
         Callback::from(move |e: SubmitEvent| {
+            login_loading.set(true);
+            let login_loading = login_loading.clone();
             e.prevent_default();
             let login = login.clone();
             let state = state.clone();
@@ -63,12 +68,15 @@ pub fn LoginForm() -> Html {
                     },
                     Err(err) => login_err.set(Some(err)),
                 };
+                login_loading.set(false);
             });
         })
     };
 
     let oidc_click = {
+        let login_loading = login_loading.clone();
         Callback::from(move |_| {
+            login_loading.set(true);
             spawn_local(async move {
                 let redirect_uri = api::oidc_get_url().await;
                 window().unwrap().location().set_href(&redirect_uri).unwrap();
@@ -100,18 +108,20 @@ pub fn LoginForm() -> Html {
             <form onsubmit={submit} class="flex flex-col gap-5 mt-2">
                 <input class="border-b-1 border-amber-400 p-1" oninput={username_change} type="text" placeholder="user id" name="user" />
                 <input class="border-b-1 border-amber-400 p-1" oninput={password_change} type="password" placeholder="password" name="password" />
-                <button type="submit" class="cursor-pointer bg-amber-50 border-1 rounded-xl p-3 font-mono border-amber-400">{"Submit"}</button>
+                <Button name="Submit" loading={*login_loading} />
             </form>
 
             if *oidc_state != Some(false) {
                 <div class="text-center m-5"> {"OR"} </div>
             }
 
+            <div class="flex flex-col">
             if *oidc_state == None {
-                <button class="cursor-not-allowed bg-amber-00 border-1 rounded-xl p-3 font-mono border-red-400 w-full">{"OIDC state loading..."}</button>
+                <Button name="OIDC state loading..." loading={true} />
             } else if *oidc_state == Some(true) {
-                <button class="cursor-pointer bg-amber-50 border-1 rounded-xl p-3 font-mono border-amber-400 w-full" onclick={oidc_click}>{"Login with OIDC"}</button>
+                <Button name="Login with OIDC" loading={*login_loading} on_click={oidc_click} />
             }
+            </div>
         </div>
     )
 }

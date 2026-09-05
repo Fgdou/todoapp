@@ -1,7 +1,7 @@
 use yew::{platform::spawn_local, prelude::*};
 use yew_router::hooks::use_navigator;
 
-use crate::{Route, api::{delete_task, get_tasks, new_task, update_task}, components::task::TaskItem, models::{context::AppContext, tasks::{Task, TaskInsert}}};
+use crate::{Route, api::{delete_task, get_tasks, new_task, update_task}, components::{button::Button, task::TaskItem}, models::{context::AppContext, tasks::{Task, TaskInsert}}};
 
 #[component]
 pub fn TaskList() -> Html {
@@ -11,19 +11,23 @@ pub fn TaskList() -> Html {
     let token = user.as_ref().map(|u| u.token.clone()).unwrap_or_default();
     let navigator = use_navigator().unwrap();
 
+    let refreshing = use_state(|| false);
+
     if user.as_ref().is_none() {
         navigator.push(&Route::Login);
         return html!(<></>)
     }
 
     {
+        let refreshing = refreshing.clone();
         let tasks = tasks.clone();
         let token = token.clone();
         use_effect_with((), move |_| {
-            let token = token.clone();
+            refreshing.set(true);
             spawn_local(async move {
                 let res = get_tasks(&token).await;
                 tasks.set(res);
+                refreshing.set(false);
             });
 
             || ()
@@ -36,7 +40,7 @@ pub fn TaskList() -> Html {
         Callback::from(move |todo: Task| {
             {    
                 let todo = todo.clone();
-            let token = token.clone();
+                let token = token.clone();
                 spawn_local(async move {
                     update_task(todo.clone(), &token).await;
                 });
@@ -87,12 +91,16 @@ pub fn TaskList() -> Html {
     let update_handler = {
         let tasks = tasks.clone();
         let token = token.clone();
+        let refreshing = refreshing.clone();
         Callback::from(move |_| {
+            let refreshing = refreshing.clone();
+            refreshing.set(true);
             let tasks = tasks.clone();
             let token = token.clone();
             spawn_local(async move {
                 let items = get_tasks(&token).await;
                 tasks.set(items);
+                refreshing.set(false);
             });
         })
     };
@@ -100,8 +108,8 @@ pub fn TaskList() -> Html {
     html!(
         <div>
             <div class="my-5 flex justify-between">
-                <button class="cursor-pointer bg-amber-50 font-mono py-2 px-5 text-xl rounded-xl border-1 border-amber-400" onclick={new_item}>{"New Item"}</button>
-                <button class="cursor-pointer bg-amber-50 font-mono py-2 px-5 text-xl rounded-xl border-1 border-amber-400" onclick={update_handler}>{"Refresh"}</button>
+                <Button name="New Item" on_click={new_item}/>
+                <Button name="Refresh" on_click={update_handler} loading={*refreshing}/>
             </div>
             <div  class="flex gap-3 flex-col">
                 for todo in tasks.iter() {
