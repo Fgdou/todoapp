@@ -1,0 +1,41 @@
+@client_id = xxx
+@client_secret = xxx
+@redirect_uri = http://localhost/redirect
+@discovery_url = https://xxx.example.com/application/o/todo-test/.well-known/openid-configuration
+
+###
+
+# Get infos
+GET https://auth.fgdou.ovh/application/o/todo-test/.well-known/openid-configuration
+Accept: application/json
+
+###
+
+# Authenticate
+GET https://auth.fgdou.ovh/application/o/authorize/
+    ?client_id={{client_id}}
+    &response_type=code
+    &scope=openid%20profile
+    &redirect_uri={{redirect_uri}} HTTP/1.1
+
+@code = 56a240b8969641898c19b8c79aeca7a7
+
+###
+
+# Verify backend
+POST https://auth.fgdou.ovh/application/o/token/ HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=authorization_code
+&client_id={{client_id}}
+&client_secret={{client_secret}}
+&code={{code}}
+&redirect_uri={{redirect_uri}}
+
+@access_token = xxxx.xxx.xxx
+
+###
+
+GET https://auth.fgdou.ovh/application/o/userinfo/ HTTP/1.1
+Authorization: Bearer {{access_token}}
+Accept: application/json

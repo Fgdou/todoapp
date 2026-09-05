@@ -70,3 +70,37 @@ pub async fn logout(token: &str) {
         .await
         .unwrap();
 }
+
+pub async fn oidc_redirect(code: &str) -> User {
+    let url = format!("{BACKEND_URL}/auth/oidc/redirect?code={code}");
+    Request::get(&url)
+        .send()
+        .await
+        .unwrap()
+        .json()
+        .await
+        .unwrap()
+}
+
+pub async fn oidc_get_url() -> String {
+    let url = format!("{BACKEND_URL}/auth/oidc/authorize");
+    Request::get(&url)
+        .send()
+        .await
+        .unwrap()
+        .text()
+        .await
+        .unwrap()
+}
+
+pub async fn oidc_exists() -> bool {
+    let url = format!("{BACKEND_URL}/auth/oidc");
+    let res = Request::get(&url)
+        .send()
+        .await
+        .unwrap()
+        .text()
+        .await
+        .unwrap();
+    return res.to_lowercase() == "true"
+}
