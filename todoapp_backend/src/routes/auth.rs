@@ -12,9 +12,9 @@ pub fn get_routes() -> Vec<Route> {
 pub async fn register_user(conn: Database, user: Json<UserRegister>) -> Json<Result<UserResponse, String>> {
     let username = user.username.clone();
     let mut user = user.into_inner();
-    user.password = hash_password(&user.username, &user.password);
+    user.password = Some(hash_password(&user.username, &user.password.unwrap()));
     Json(
-        User::save(user, &conn)
+        user.save(&conn)
             .await
             .map(|u| u.into())
             .ok_or(format!("User {username} already exists"))
@@ -42,8 +42,13 @@ pub async fn login(conn: Database, user: Json<UserLogin>) -> Json<Result<UserLog
             Some(user) => user
     };
 
-    if hashed_password != user.password {
-        return Json(Err("Password is incorrect".into()))
+    match user.password {
+        None => return Json(Err("This user uses OIDC".into())),
+        Some(password) => {
+            if password != hashed_password {
+                return Json(Err("Password is incorrect".into()))
+            }
+        }
     }
 
     let token = Token {
@@ -85,9 +90,9 @@ pub async fn oidc_redirect(conn: Database, code: String, oidc: &State<Option<Oid
             rocket::info!("User {} does not exist, creating it...", &username);
             let user = UserRegister {
                 username: username.clone(),
-                password: String::new(),
+                password: None,
             };
-            let user = User::save(user, &conn).await.unwrap();
+            let user = user.save(&conn).await.unwrap();
             user
         }
     };

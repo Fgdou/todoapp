@@ -9,7 +9,7 @@ use crate::{Database, schema};
 pub struct User {
     pub id: i32,
     pub username: String,
-    pub password: String,
+    pub password: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -36,7 +36,7 @@ pub struct UserLogin {
 #[diesel(table_name = schema::users)]
 pub struct UserRegister {
     pub username: String,
-    pub password: String,
+    pub password: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -47,20 +47,6 @@ pub struct UserLoginResponse {
 }
 
 impl User {
-    pub async fn save(user: UserRegister, conn: &Database) -> Option<Self> {
-        conn.run(move |c| {
-            let res = diesel::insert_into(schema::users::table)
-                .values(user)
-                .returning(Self::as_returning())
-                .get_result(c);
-
-            match res {
-                Ok(u) => Some(u),
-                Err(DatabaseError(UniqueViolation, _)) => None,
-                Err(e) => panic!("{:?}", e),
-            }
-        }).await
-    }
     pub async fn delete(id: i32, conn: &Database) {
         conn.run(move |c| {
             diesel::delete(schema::users::table)
@@ -122,5 +108,24 @@ impl From<User> for UserResponse {
             id: value.id,
             username: value.username,
         }
+    }
+}
+
+impl UserRegister {
+
+    pub async fn save(&self, conn: &Database) -> Option<User> {
+        let user = self.clone();
+        conn.run(move |c| {
+            let res = diesel::insert_into(schema::users::table)
+                .values(user)
+                .returning(User::as_returning())
+                .get_result(c);
+
+            match res {
+                Ok(u) => Some(u),
+                Err(DatabaseError(UniqueViolation, _)) => None,
+                Err(e) => panic!("{:?}", e),
+            }
+        }).await
     }
 }
