@@ -82,7 +82,7 @@ pub fn TaskItem(props: &ItemProps) -> Html {
             <div class="flex-grow flex flex-col">
                 <div class="flex">
                     <span class="flex-grow">{title}</span>
-                    <span><button onclick={delete_handler} class="text-red-800 font-mono">{"Delete"}</button></span>
+                    <span><button onclick={delete_handler} class="cursor-pointer text-red-800 font-mono">{"Delete"}</button></span>
                 </div>
                 <span>{description}</span>
             </div>

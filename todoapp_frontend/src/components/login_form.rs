@@ -100,7 +100,7 @@ pub fn LoginForm() -> Html {
             <form onsubmit={submit} class="flex flex-col gap-5 mt-2">
                 <input class="border-b-1 border-amber-400 p-1" oninput={username_change} type="text" placeholder="user id" name="user" />
                 <input class="border-b-1 border-amber-400 p-1" oninput={password_change} type="password" placeholder="password" name="password" />
-                <button type="submit" class="bg-amber-50 border-1 rounded-xl p-3 font-mono border-amber-400">{"Submit"}</button>
+                <button type="submit" class="cursor-pointer bg-amber-50 border-1 rounded-xl p-3 font-mono border-amber-400">{"Submit"}</button>
             </form>
 
             if *oidc_state != Some(false) {
@@ -108,9 +108,9 @@ pub fn LoginForm() -> Html {
             }
 
             if *oidc_state == None {
-                <button class="bg-amber-00 border-1 rounded-xl p-3 font-mono border-red-400 w-full">{"OIDC state loading..."}</button>
+                <button class="cursor-not-allowed bg-amber-00 border-1 rounded-xl p-3 font-mono border-red-400 w-full">{"OIDC state loading..."}</button>
             } else if *oidc_state == Some(true) {
-                <button class="bg-amber-50 border-1 rounded-xl p-3 font-mono border-amber-400 w-full" onclick={oidc_click}>{"Login with OIDC"}</button>
+                <button class="cursor-pointer bg-amber-50 border-1 rounded-xl p-3 font-mono border-amber-400 w-full" onclick={oidc_click}>{"Login with OIDC"}</button>
             }
         </div>
     )

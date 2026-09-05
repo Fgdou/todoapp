@@ -100,8 +100,8 @@ pub fn TaskList() -> Html {
     html!(
         <div>
             <div class="my-5 flex justify-between">
-                <button class="bg-amber-50 font-mono py-2 px-5 text-xl rounded-xl border-1 border-amber-400" onclick={new_item}>{"New Item"}</button>
-                <button class="bg-amber-50 font-mono py-2 px-5 text-xl rounded-xl border-1 border-amber-400" onclick={update_handler}>{"Refresh"}</button>
+                <button class="cursor-pointer bg-amber-50 font-mono py-2 px-5 text-xl rounded-xl border-1 border-amber-400" onclick={new_item}>{"New Item"}</button>
+                <button class="cursor-pointer bg-amber-50 font-mono py-2 px-5 text-xl rounded-xl border-1 border-amber-400" onclick={update_handler}>{"Refresh"}</button>
             </div>
             <div  class="flex gap-3 flex-col">
                 for todo in tasks.iter() {
