@@ -5,12 +5,13 @@ pub mod components;
 use yew::prelude::*;
 use yew_router::{BrowserRouter, Routable, Switch};
 
-use crate::{components::{login_form::LoginForm, task_list::TaskList}, models::context::{AppContext, Context}};
+use crate::{components::{login_form::LoginForm, oidc::OidcRedirect, task_list::TaskList}, models::context::{AppContext, Context}};
 
 fn switch(routes: Route) -> Html {
     match routes {
         Route::Home => html!(<Home/>),
         Route::Login => html!(<Login/>),
+        Route::OidcRedirect => html!(<OidcRedirect/>)
     }
 }
 
@@ -53,6 +54,8 @@ enum Route {
     Home,
     #[at("/login")]
     Login,
+    #[at("/auth/oidc/redirect")]
+    OidcRedirect,
 }
 
 fn main() {

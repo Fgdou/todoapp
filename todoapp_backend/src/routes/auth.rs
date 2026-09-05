@@ -1,11 +1,11 @@
 use rand::distr::{Alphanumeric, SampleString};
-use rocket::{Route, serde::json::Json};
+use rocket::{Route, State, serde::json::Json};
 use sha2::{Digest, Sha256};
 
-use crate::{Database, core::auth::Auth, models::users::{Token, User, UserLogin, UserLoginResponse, UserRegister, UserResponse}};
+use crate::{Database, core::{auth::Auth, oidc::Oidc}, models::users::{Token, User, UserLogin, UserLoginResponse, UserRegister, UserResponse}};
 
 pub fn get_routes() -> Vec<Route> {
-    routes![register_user, login, user_logout]
+    routes![register_user, login, user_logout, oidc_authorize, oidc_redirect, oidc_exists]
 }
 
 #[post("/register", data = "<user>")]
@@ -60,6 +60,51 @@ pub async fn login(conn: Database, user: Json<UserLogin>) -> Json<Result<UserLog
     };
 
     Json(Ok(response))
+}
+
+#[get("/oidc/authorize")]
+pub async fn oidc_authorize(oidc: &State<Option<Oidc>>) -> String {
+    let oidc = oidc.as_ref().unwrap();
+    oidc.authorize_new().0
+}
+
+#[get("/oidc")]
+pub async fn oidc_exists(oidc: &State<Option<Oidc>>) -> String {
+    oidc.is_some().to_string()
+}
+
+#[get("/oidc/redirect?<code>")]
+pub async fn oidc_redirect(conn: Database, code: String, oidc: &State<Option<Oidc>>) -> Json<UserLoginResponse> {
+    let oidc = oidc.as_ref().unwrap();
+    let username = oidc.validate_authorization(code).await;
+    let user = User::get_by_username(username.clone(), &conn).await;
+
+    let user = match user {
+        Some(u) => u,
+        None => {
+            rocket::info!("User {} does not exist, creating it...", &username);
+            let user = UserRegister {
+                username: username.clone(),
+                password: String::new(),
+            };
+            let user = User::save(user, &conn).await.unwrap();
+            user
+        }
+    };
+
+    let token = Token {
+        user_id: user.id,
+        token: generate_random_token(),
+    };
+    let token = token.save(&conn).await;
+
+    let response = UserLoginResponse {
+        user_id: user.id,
+        username: user.username,
+        token: token.token,
+    };
+
+    Json(response)
 }
 
 fn generate_random_token() -> String {

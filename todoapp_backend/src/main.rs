@@ -6,7 +6,7 @@ use rocket::fairing::AdHoc;
 use rocket_cors::{AllowedOrigins, CorsOptions};
 use rocket_sync_db_pools::database;
 
-use crate::{core::auth::unauthorized, routes::{auth, tasks}};
+use crate::{core::{auth::unauthorized, oidc::Oidc}, routes::{auth, tasks}};
 
 pub mod schema;
 pub mod models;
@@ -38,8 +38,13 @@ fn rocket() -> _ {
     }.to_cors().unwrap();
 
     dotenv().ok();
+
     rocket::build()
         .attach(cors)
+        .attach(AdHoc::on_ignite("OIDC setup", |rocket| async {
+            let oidc = Oidc::new_from_env().await;
+            rocket.manage(oidc)
+        }))
         .attach(Database::fairing())
         .attach(AdHoc::on_ignite("Database Migrations", |rocket| async move {
             println!("Running database Migrations...");

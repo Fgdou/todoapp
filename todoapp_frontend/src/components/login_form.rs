@@ -1,4 +1,4 @@
-use web_sys::{HtmlInputElement, js_sys::futures::spawn_local};
+use web_sys::{HtmlInputElement, js_sys::futures::spawn_local, window};
 use yew::prelude::*;
 use yew_router::hooks::use_navigator;
 
@@ -67,6 +67,28 @@ pub fn LoginForm() -> Html {
         })
     };
 
+    let oidc_click = {
+        Callback::from(move |_| {
+            spawn_local(async move {
+                let redirect_uri = api::oidc_get_url().await;
+                window().unwrap().location().set_href(&redirect_uri).unwrap();
+            });
+        })
+    };
+
+    let oidc_state = use_state(|| None);
+
+    {
+        let oidc_state = oidc_state.clone();
+        use_effect_with((), move |_| {
+            let oidc_state = oidc_state.clone();
+            spawn_local(async move {
+                let res = api::oidc_exists().await;
+                oidc_state.set(Some(res));
+            });
+        });
+    }
+
     html!(
         <div class="w-lg mx-auto bg-white rounded-3xl p-10">
             <h1 class="text-center text-5xl font-mono my-10"> {"LOGIN"} </h1>
@@ -80,6 +102,14 @@ pub fn LoginForm() -> Html {
                 <input class="border-b-1 border-amber-400 p-1" oninput={password_change} type="password" placeholder="password" name="password" />
                 <button type="submit" class="bg-amber-50 border-1 rounded-xl p-3 font-mono border-amber-400">{"Submit"}</button>
             </form>
+
+            if *oidc_state == None {
+                <div> {"OR"} </div>
+                {"OIDC loading..."}
+            } else if *oidc_state == Some(true) {
+                <div> {"OR"} </div>
+                <button onclick={oidc_click}>{"Login with OIDC"}</button>
+            }
         </div>
     )
 }
