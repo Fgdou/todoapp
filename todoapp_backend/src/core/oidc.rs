@@ -46,18 +46,21 @@ impl Oidc {
     }
 
     pub async fn new_from_env() -> Option<Self> {
-        match env::var("OIDC_ENABLED") {
-            Err(_) => return None,
-            Ok(value) => if value.to_lowercase() != "true" {
-                return None;
-            },
+        let enabled = match env::var("OIDC_ENABLED") {
+            Err(_) => false,
+            Ok(value) => value.to_lowercase() == "true"
         };
+
+        if !enabled {
+            rocket::info!("OIDC_ENABLED not enabled");
+            return None;
+        }
         
         Some(Self::new(
-            env::var("OIDC_CONFIGURATION_URI").unwrap(),
-            env::var("OIDC_CLIENT_ID").unwrap(),
-            env::var("OIDC_CLIENT_SECRET").unwrap(),
-            env::var("OIDC_REDIRECT_URI").unwrap(),
+            env::var("OIDC_CONFIGURATION_URI").expect("OIDC_CONFIGURATION_URI not set"),
+            env::var("OIDC_CLIENT_ID").expect("OIDC_CLIENT_ID not set"),
+            env::var("OIDC_CLIENT_SECRET").expect("OIDC_CLIENT_SECRET not set"),
+            env::var("OIDC_REDIRECT_URI").expect("OIDC_REDIRECT_URI not set"),
         ).await)
     }
 
@@ -118,9 +121,9 @@ impl Oidc {
             .get(url)
             .send()
             .await
-            .unwrap()
+            .expect(&format!("Failed to get the OIDC configuration from {}", url))
             .json()
             .await
-            .unwrap()
+            .expect(&format!("Failed to get the OIDC configuration from {}", url))
     }
 }

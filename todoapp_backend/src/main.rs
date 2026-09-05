@@ -47,7 +47,7 @@ fn rocket() -> _ {
         }))
         .attach(Database::fairing())
         .attach(AdHoc::on_ignite("Database Migrations", |rocket| async move {
-            println!("Running database Migrations...");
+            rocket::info!("Running database Migrations...");
             // 1. Extract the SQLite database connection string from Rocket's config
             let db_url = rocket.figment()
                 .extract_inner::<String>("databases.sqlite.url")
@@ -66,7 +66,7 @@ fn rocket() -> _ {
             .await
             .expect("Migration task failed");
 
-            println!("Done !");
+            rocket::info!("Done !");
 
             rocket
         }))
