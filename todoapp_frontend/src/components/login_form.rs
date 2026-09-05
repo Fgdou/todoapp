@@ -98,7 +98,7 @@ pub fn LoginForm() -> Html {
     }
 
     html!(
-        <div class="w-lg mx-auto bg-white rounded-3xl p-10">
+        <div class="w-[90vw] m-10 mx-auto bg-white rounded-3xl p-10 md:w-lg">
             <h1 class="text-center text-5xl font-mono my-10"> {"LOGIN"} </h1>
             if let Some(error) = login_err.as_ref() {
                 <div class="bg-red-100 p-2 rounded text-center">
