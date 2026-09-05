@@ -7,6 +7,7 @@ This is a personal project to build a full-stack application from scratch in Rus
 Features :
 - Add, remove and modify a task
 - OpenID connect (implemented from scratch)
+- Full CI/CD until deployment
 
 Technologies are :
 |Name|Description|
