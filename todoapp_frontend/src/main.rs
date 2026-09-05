@@ -29,7 +29,7 @@ fn App() -> Html {
 #[component]
 fn Login() -> Html {
     html!(
-        <div>
+        <div class="bg-amber-50 h-screen flex justify-center flex-col">
             <LoginForm />
         </div>
     )

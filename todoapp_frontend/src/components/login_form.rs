@@ -68,16 +68,17 @@ pub fn LoginForm() -> Html {
     };
 
     html!(
-        <div>
+        <div class="w-lg mx-auto bg-white rounded-3xl p-10">
+            <h1 class="text-center text-5xl font-mono my-10"> {"LOGIN"} </h1>
             if let Some(error) = login_err.as_ref() {
-                <div>
+                <div class="bg-red-100 p-2 rounded">
                     {error}
                 </div>
             }
-            <form onsubmit={submit}>
-                <input oninput={username_change} type="text" placeholder="user id" name="user" />
-                <input oninput={password_change} type="password" placeholder="password" name="password" />
-                <button type="submit">{"Login"}</button>
+            <form onsubmit={submit} class="flex flex-col gap-5 mt-2">
+                <input class="border-b-1 border-amber-400 p-1" oninput={username_change} type="text" placeholder="user id" name="user" />
+                <input class="border-b-1 border-amber-400 p-1" oninput={password_change} type="password" placeholder="password" name="password" />
+                <button type="submit" class="bg-amber-50 border-1 rounded-xl p-3 font-mono border-amber-400">{"Submit"}</button>
             </form>
         </div>
     )
