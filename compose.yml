@@ -1,6 +1,12 @@
 services:
   todoapp:
     image: ghcr.io/fgdou/todoapp:latest
+    environment:
+      # - OIDC_CONFIGURATION_URI=
+      # - OIDC_CLIENT_ID=
+      # - OIDC_CLIENT_SECRET=
+      # - OIDC_REDIRECT_URI=http://localhost:8080/auth/oidc/redirect
+      # - OIDC_ENABLED=true
     ports:
       - 8080:80
     volumes:
