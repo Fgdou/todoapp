@@ -77,7 +77,7 @@ pub async fn verify_login() -> Option<User> {
 
 pub async fn logout() {
     let url = format!("{BACKEND_URL}/auth/logout");
-    Request::post(&url)
+    Request::get(&url)
         .credentials(RequestCredentials::Include)
         .send()
         .await

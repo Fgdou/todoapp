@@ -45,6 +45,7 @@ pub fn TaskList() -> Html {
             let return_closure = ||{};
 
             if user.is_none() {
+                tasks.set(vec![]);
                 return return_closure;
             }
             refreshing.set(true);
