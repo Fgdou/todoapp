@@ -4,7 +4,7 @@ pub mod components;
 
 use web_sys::js_sys::futures::spawn_local;
 use yew::prelude::*;
-use yew_router::{BrowserRouter, Routable, Switch, hooks::use_navigator, navigator};
+use yew_router::{BrowserRouter, Routable, Switch, hooks::use_navigator};
 
 use crate::{components::{login_form::LoginForm, oidc::OidcRedirect, task_list::TaskList}, models::context::{ActionContext, AppContext, Context}};
 
