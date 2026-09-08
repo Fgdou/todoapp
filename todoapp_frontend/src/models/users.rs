@@ -4,7 +4,6 @@ use serde::{Deserialize, Serialize};
 pub struct User {
     pub user_id: i32,
     pub username: String,
-    pub token: String,
 }
 
 #[derive(Serialize, Deserialize, Clone)]

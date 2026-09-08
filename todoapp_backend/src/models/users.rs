@@ -43,7 +43,6 @@ pub struct UserRegister {
 pub struct UserLoginResponse {
     pub user_id: i32,
     pub username: String,
-    pub token: String,
 }
 
 impl User {

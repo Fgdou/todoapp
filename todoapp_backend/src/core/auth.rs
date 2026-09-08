@@ -25,12 +25,12 @@ impl<'r> FromRequest<'r> for Auth {
             request::Outcome::Forward(status) => return request::Outcome::Forward(status),
         };
 
-        let header_token = match req.headers().get_one("Token") {
+        let cookie_token = match req.cookies().get("session") {
             Some(token) => token,
             None => return fail("No Token provided"),
         };
 
-        let token = match Token::get_token(header_token.to_string(), &conn).await {
+        let token = match Token::get_token(cookie_token.value().to_string(), &conn).await {
             Some(token) => token,
             None => return fail("Token is not valid")
         };

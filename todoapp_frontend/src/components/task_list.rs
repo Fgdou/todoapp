@@ -8,7 +8,6 @@ pub fn TaskList() -> Html {
     let tasks = use_state(|| Vec::new());
     let context = use_context::<AppContext>().unwrap();
     let user = &context.user;
-    let token = user.as_ref().map(|u| u.token.clone()).unwrap_or_default();
     let navigator = use_navigator().unwrap();
 
     let refreshing = use_state(|| false);
@@ -21,11 +20,10 @@ pub fn TaskList() -> Html {
     {
         let refreshing = refreshing.clone();
         let tasks = tasks.clone();
-        let token = token.clone();
         use_effect_with((), move |_| {
             refreshing.set(true);
             spawn_local(async move {
-                let res = get_tasks(&token).await;
+                let res = get_tasks().await;
                 tasks.set(res);
                 refreshing.set(false);
             });
@@ -36,13 +34,11 @@ pub fn TaskList() -> Html {
 
     let callback = {
         let tasks = tasks.clone();
-        let token = token.clone();
         Callback::from(move |todo: Task| {
             {    
                 let todo = todo.clone();
-                let token = token.clone();
                 spawn_local(async move {
-                    update_task(todo.clone(), &token).await;
+                    update_task(todo.clone()).await;
                 });
             }
 
@@ -56,11 +52,9 @@ pub fn TaskList() -> Html {
 
     let delete_callback = {
         let tasks = tasks.clone();
-        let token = token.clone();
         Callback::from(move |id: i32| {
-            let token = token.clone();
             spawn_local(async move {
-                delete_task(id, &token).await;
+                delete_task(id).await;
             });
 
             let mut new_tasks = (*tasks).clone();
@@ -71,17 +65,15 @@ pub fn TaskList() -> Html {
 
     let new_item = {
         let tasks = tasks.clone();
-        let token = token.clone();
         Callback::from(move |_| {
             let tasks = tasks.clone();
-            let token = token.clone();
             spawn_local(async move {
                 let mut new_tasks = (*tasks).clone();
                 let item = TaskInsert {
                     description: String::new(),
                     title: String::new(),
                 };
-                let res = new_task(item, &token).await;
+                let res = new_task(item).await;
                 new_tasks.push(res);
                 tasks.set(new_tasks);
             });
@@ -90,15 +82,13 @@ pub fn TaskList() -> Html {
 
     let update_handler = {
         let tasks = tasks.clone();
-        let token = token.clone();
         let refreshing = refreshing.clone();
         Callback::from(move |_| {
             let refreshing = refreshing.clone();
             refreshing.set(true);
             let tasks = tasks.clone();
-            let token = token.clone();
             spawn_local(async move {
-                let items = get_tasks(&token).await;
+                let items = get_tasks().await;
                 tasks.set(items);
                 refreshing.set(false);
             });
