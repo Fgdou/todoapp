@@ -1,34 +1,59 @@
 use yew::{platform::spawn_local, prelude::*};
 use yew_router::hooks::use_navigator;
 
-use crate::{Route, api::{delete_task, get_tasks, new_task, update_task}, components::{button::Button, task::TaskItem}, models::{context::AppContext, tasks::{Task, TaskInsert}}};
+use crate::{Route, api::{self, delete_task, get_tasks, new_task, update_task}, components::{button::Button, task::TaskItem}, models::{context::{ActionContext, AppContext}, tasks::{Task, TaskInsert}}};
 
 #[component]
 pub fn TaskList() -> Html {
     let tasks = use_state(|| Vec::new());
     let context = use_context::<AppContext>().unwrap();
-    let user = &context.user;
     let navigator = use_navigator().unwrap();
 
     let refreshing = use_state(|| false);
 
-    if user.as_ref().is_none() {
-        navigator.push(&Route::Login);
-        return html!(<></>)
+    {
+        let context = context.clone();
+        use_effect_with((), move |_| {
+            let context = context.clone();
+            let user = &context.user;
+            if user.as_ref().is_none() {
+                let context = context.clone();
+                spawn_local(async move {
+                    let res = api::verify_login().await;
+                    let context = context.clone();
+
+                    match res {
+                        None => {
+                            navigator.push(&Route::Login);
+                        },
+                        Some(user) => {
+                            context.dispatch(ActionContext::SetUser(user));
+                        }
+                    };
+                });
+            }
+        });
     }
+
+    let user = &context.user;
 
     {
         let refreshing = refreshing.clone();
         let tasks = tasks.clone();
-        use_effect_with((), move |_| {
+        let user = user.clone();
+        use_effect_with(user, move |user| {
+            let return_closure = ||{};
+
+            if user.is_none() {
+                return return_closure;
+            }
             refreshing.set(true);
             spawn_local(async move {
                 let res = get_tasks().await;
                 tasks.set(res);
                 refreshing.set(false);
             });
-
-            || ()
+            return_closure
         });
     }
 

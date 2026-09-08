@@ -5,7 +5,15 @@ use sha2::{Digest, Sha256};
 use crate::{Database, core::{auth::Auth, oidc::Oidc}, models::users::{Token, User, UserLogin, UserLoginResponse, UserRegister, UserResponse}};
 
 pub fn get_routes() -> Vec<Route> {
-    routes![register_user, login, user_logout, oidc_authorize, oidc_redirect, oidc_exists]
+    routes![
+        register_user, 
+        login, 
+        user_logout, 
+        oidc_authorize, 
+        oidc_redirect, 
+        oidc_exists,
+        verify_login,
+    ]
 }
 
 #[post("/register", data = "<user>")]
@@ -27,6 +35,29 @@ fn hash_password(username: &str, password: &str) -> String {
     hash.update(password);
     let result = hash.finalize();
     hex::encode(result)
+}
+
+#[get("/verify_login")]
+pub async fn verify_login(conn: Database, cookies: &CookieJar<'_>) -> Json<Option<UserLoginResponse>> {
+    let token = cookies.get("session").map(|t| t.value());
+    let token = match token {
+        None => None,
+        Some(token) => Token::get_token(token.to_string(), &conn).await
+    };
+    let user = match token {
+        None => None,
+        Some(token) => User::get_user(token.user_id, &conn).await
+    };
+
+    let res = match user {
+        None => None,
+        Some(user ) => Some(UserLoginResponse {
+            username: user.username,
+            user_id: user.id,
+        }),
+    };
+
+    Json(res)
 }
 
 #[post("/login", data = "<user>")]

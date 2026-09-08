@@ -63,6 +63,18 @@ pub async fn login(login: &Login) -> Result<User, String> {
         .unwrap()
 }
 
+pub async fn verify_login() -> Option<User> {
+    let url = format!("{BACKEND_URL}/auth/verify_login");
+    Request::get(&url)
+        .credentials(RequestCredentials::Include)
+        .send()
+        .await
+        .unwrap()
+        .json()
+        .await
+        .unwrap()
+}
+
 pub async fn logout() {
     let url = format!("{BACKEND_URL}/auth/logout");
     Request::post(&url)
